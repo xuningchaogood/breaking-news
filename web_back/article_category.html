@@ -107,30 +107,6 @@
         </div>
       </div>
 
-      <script>
-          $('#addModal').modal({
-            show:false,
-            backdrop:false
-          });
-
-          $('#model_shutoff').click(function(){
-            alert('shutoff');
-            $('#addModal').modal('hide');
-          });
-
-          $('#model_add').click(function(){
-            alert('add');
-            $('#addModal').modal('hide');
-          });
-
-          $('.category_table').delegate('a','click',function(){
-              if($(this).hasClass('btn-info')){
-                $('#addModal .modal-title').html('修改分类名称');
-                $('#addModal').modal('show');
-              }
-          })      
-      </script>
-
 </body>
 
 </html>

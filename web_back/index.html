@@ -130,83 +130,9 @@
       </div>
     </div>
 
-    <script>
-      var $level01 = $('.level01')
-      var $subli = $('.level02 li')
-      $level01.click(function() {
-        $level01.not($(this)).removeClass('active')
-        $(this).addClass('active')
-
-        if (
-          $(this)
-            .next()
-            .hasClass('level02')
-        ) {
-          $(this)
-            .next()
-            .slideToggle()
-          $(this)
-            .find('b')
-            .toggleClass('rotate0')
-        } else {
-          $subli.removeClass('active')
-        }
-      })
-
-      $subli.click(function() {
-        $subli.not($(this)).removeClass('active')
-        $(this).addClass('active')
-
-        if (
-          !$(this)
-            .parent()
-            .prev()
-            .hasClass('active')
-        ) {
-          $level01.removeClass('active')
-          $(this)
-            .parent()
-            .prev()
-            .addClass('active')
-        }
-      })
-
-      function resizeFrame() {
-        var frame_w = $('#main_body').outerWidth()
-        var frame_h = $('#main_body').outerHeight()
-        $('#main_frame').css({ width: frame_w, height: frame_h })
-      }
-
-      resizeFrame()
-
-      $(window).resize(function() {
-        resizeFrame()
-      })
-
-      function setMenu(m, n) {
-        $level01
-          .eq(m)
-          .addClass('active')
-          .siblings()
-          .not('.level02')
-          .removeClass('active')
-        if (m != 1) {
-          $('.level02').slideUp()
-        } else {
-          $('.level02').slideDown()
-          $('.level02')
-            .children()
-            .eq(n)
-            .addClass('active')
-            .siblings()
-            .removeClass('active')
-        }
-      }
-    </script>
   </body>
 </html>
-<script>
-  /*
+  <!-- /*
         用户登出
             1. 退出按钮绑定点击事件
             2. 弹出bootstrap的模态框 提示是否确认
@@ -215,28 +141,4 @@
                     1. ajax调用接口
                     2. 数据回来之后 返回登录页即可
     */
-  $(function() {
-    // 退出按钮的 点击事件 弹框提示
-    $('.icon-tuichu')
-      .parent()
-      .click(function() {
-        // 弹框
-        $('#myModal').modal()
-      })
-
-    // 点击确认
-    $('.btn-leave').click(function() {
-      $.ajax({
-        url: 'https://autumnfish.cn/big/admin/logout',
-        type: 'post',
-        success: function(backData) {
-          //   console.log(backData)
-          if (backData.code == 200) {
-            window.location.href = './login.html'
-          }
-        }
-      })
-    })
-  })
-
-</script>
+   -->
