@@ -175,8 +175,53 @@
             };
 
             oChart.setOption(chartopt);
+        };
 
+        //获取文章类型数组供月文章访问量功能模块
+        var serieskeyData;
+        //文章类型数组变量
+        var ColorArr;
+        //调用函数
+        oPieoptFunc();
 
+        //饼形图模块
+        $.get({
+            url: 'http://localhost:8000/admin/article_category_count',
+            success: function (res) {
+                var keyData;
+                var oPieoptObject;
+                if (res.code == 200) {
+                    keyData = [];
+                    oPieoptObject = [];
+
+                    //初始化文章类型统计图颜色数组
+
+                    ColorArr = [];
+
+                    var arr = res.data;
+
+                    //遍历res.data
+                    for (var i = 0; i < arr.length; i++) {
+                        keyData.push(arr[i].type);
+                        oPieoptObject.push({ name: arr[i].type, value: arr[i].all_count });
+                        ColorArr.push(getColor());
+                    }
+                }
+                serieskeyData = keyData;
+                oPieoptFunc(keyData, oPieoptObject, ColorArr);
+            }
+        })
+        //封装饼形图函数
+        function oPieoptFunc(keyData, oPieoptObject, ColorArr) {
+
+            var kData = keyData || ['奇趣事', '会生活', '爱旅行', '趣美味'];
+            var oPieoptO = oPieoptObject || [
+                { value: 300, name: '奇趣事' },
+                { value: 100, name: '会生活' },
+                { value: 260, name: '爱旅行' },
+                { value: 180, name: '趣美味' }
+            ];
+            var Color = ColorArr || ['#5885e8', '#13cfd5', '#00ce68', '#ff9565'];
             var oPie = echarts.init(document.getElementById('pie_show'));
             var oPieopt =
             {
@@ -193,7 +238,7 @@
                 legend: {
                     x: 'center',
                     top: 65,
-                    data: ['奇趣事', '会生活', '爱旅行', '趣美味']
+                    data: kData
                 },
                 toolbox: {
                     show: true,
@@ -225,19 +270,32 @@
                         type: 'pie',
                         radius: ['45%', '60%'],
                         center: ['50%', '65%'],
-                        data: [
-                            { value: 300, name: '奇趣事' },
-                            { value: 100, name: '会生活' },
-                            { value: 260, name: '爱旅行' },
-                            { value: 180, name: '趣美味' }
-                        ]
+                        data: oPieoptO
                     }
                 ]
             };
             oPie.setOption(oPieopt);
+        };
+        //随机生成颜色
+        function getColor() {
+            var str = "";
+            var ColorArr = ["a", "b", "c", "d", "e", "f", 1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+            //随机组合
+            while (str == '' || str == '#ffffff') {
+                for (var i = 0; i < 6; i++) {
+                    str += ColorArr[parseInt(Math.random() * ColorArr.length)].toString();
 
+                }
+            }
+            if (str.length > 0) {
+                str = "#" + str;
+            }
+            return str;
+        }
 
-
+        //调用函数月表格
+        monthData();
+        function monthData() {
             var oColumn = this.echarts.init(document.getElementById('column_show'));
             var oColumnopt =
             {
@@ -344,8 +402,7 @@
                     }]
             };
             oColumn.setOption(oColumnopt);
-        }
-
+        };
     </script>
 
     <script>
@@ -381,7 +438,6 @@
                         var backData = res.data;
                         for (var i = 0; i < backData.length; i++) {
                             arr.push({ 'count': backData[i].day_count, 'date': backData[i].day });
-                            console.log(arr);
 
                         }
 
