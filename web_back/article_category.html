@@ -73,14 +73,15 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-center">
-                            <a href="#" class="btn btn-success" data-toggle="modal" data-target="#addModal">新增分类</a>
+                            <a href="#" class="btn btn-success btnAddCate" data-toggle="modal"
+                                data-target="#addModal">新增分类</a>
                         </td>
                     </tr>
                 </tfoot>
             </table>
         </div>
     </div>
-
+    <!-- 模态框 -->
     <div class="modal fade" id="addModal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -90,13 +91,14 @@
                 </div>
                 <div class="modal-body">
                     <form>
+                        <input type="hidden" name="id" class="id">
                         <div class="form-group">
                             <label for="recipient-name" class="control-label">分类名称:</label>
-                            <input type="text" class="form-control" id="recipient-name">
+                            <input type="text" class="form-control name" id="recipient-name">
                         </div>
                         <div class="form-group">
                             <label for="message-text" class="control-label">分类别名:</label>
-                            <input type="text" class="form-control" id="recipient-slug">
+                            <input type="text" class="form-control slug" id="recipient-slug">
                         </div>
                     </form>
                 </div>
@@ -107,20 +109,31 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $('#addModal').modal({
+            show: false,
+            backdrop: false
+        })
+        $('#model_shutoff').click(function () {
+            $('#addModal').modal('hide');
+        })
+    </script>
+
+
     <script type="text/html" id="tpl">
         {{ each data }}
         <tr>
             <td>{{$value.name}}</td>
             <td>{{$value.slug}}</td>
             <td class="text-center">
-                <a href="javascript:editTr({&quot;id&quot;:&quot;3&quot;,&quot;slug&quot;:&quot;living&quot;,&quot;name&quot;:&quot;未分类&quot;});"
-                    class="btn btn-info btn-xs">编辑</a>
-                <a href="javascript:deleteTr( {{$value.id}} );" class="btn btn-danger btn-xs">删除</a>
+                <a href="#" data-id="{{$value.id}}" class="btn btn-info btn-xs btn-edit">编辑</a>
+                <a href="#" data-id="{{$value.id}}" class="btn btn-danger btn-xs btn-delete">删除</a>
             </td>
         </tr>
         {{ /each }}
     </script>
-    <script type="text/html" id="tpl1">
+    <!-- <script type="text/html" id="tpl1">
         <tr>
             <td>{{name}}</td>
             <td>{{slug}}</td>
@@ -130,14 +143,15 @@
                 <a href="javascript:deleteTr( 1 );" class="btn btn-danger btn-xs">删除</a>
             </td>
         </tr>
-    </script>
+    </script> -->
     <script>
         $(function () {
+            //一打开就把代码渲染到页面上  1-----------------
             function getData() {
                 $.get({
                     url: 'http://localhost:8000/admin/category_search',
                     success: function (res) {
-                        console.log(res);
+                        // console.log(res);
 
                         if (res.code == 200) {
 
@@ -152,28 +166,103 @@
 
 
             $('#model_add').click(function () {
-                var cateName = $('#recipient-name').val().trim();
-                var cateSlug = $('#recipient-slug').val().trim();
+                if ($(this).hasClass('btn-success')) {
+                    // 编辑模块 4---------------------------------
+                    var id = $('.modal-body .id').val();
+                    var name = $('.modal-body .name').val();
+                    var slug = $('.modal-body .slug').val();
 
-                //发送请求
-                $.post({
-                    url: 'http://localhost:8000/admin/category_add',
-                    data: {
-                        name: cateName,
-                        slug: cateSlug
-                    },
-                    success: function (obj) {
-                        if (obj.code == 200) {
-                            var obj = {
-                                name: cateName,
-                                slug: cateSlug
+                    $.post({
+                        url: 'http://localhost:8000/admin/category_edit',
+                        data: { id: id, name: name, slug: slug },
+                        success: function (res) {
+                            if (res.code == 200) {
+                                alert('修改成功');
+                                getData();
                             }
-                            var reshtml = template('tpl1', obj);
-                            $('tbody').append(reshtml);
                         }
-                    }
-                });
+                    })
+                } else {
+                    // 新增分类模块 2------------------------------
+                        console.log('aklsjnd');
+                        
+                    //获取用户输入的 分类名字 和别名
+                    var cateName = $('#recipient-name').val().trim();
+                    var cateSlug = $('#recipient-slug').val().trim();
+
+                    //发送请求
+                    $.post({
+                        url: 'http://localhost:8000/admin/category_add',
+                        data: {
+                            name: cateName,
+                            slug: cateSlug
+                        },
+                        success: function (obj) {
+                            if (obj.code == 200) {
+                                getData();
+                                //直接操作dom树添加一个tr
+                                // var obj = {
+                                //     name: cateName,
+                                //     slug: cateSlug
+                                // }
+                                // var reshtml = template('tpl1', obj);
+                                // $('tbody').append(reshtml);
+                            }
+                        }
+                    });
+
+                };
+
                 $('#addModal').modal('hide');
+            })
+
+            //点击新增类别 原来模态框中的按钮颜色和文本
+            $('.btnAddCate').on('click', function () {
+                $("#addModal .modal-title").html('新增分类');
+                $('#model_add').text('新增').removeClass('btn-success');
+            })
+
+            //编辑文章类别注册点击事件
+            $('tbody').on('click', '.btn-edit', function () {
+                $('#addModal .modal-title').html('修改分类');
+                $('#model_add').text('修改').addClass('btn-success');
+                $('#addModal').modal('show');
+                //获取点击编辑的 id slug name
+                var id = $(this).attr('data-id');
+                var slug = $(this).parent().prev().text();//获取父亲的上一个兄弟
+                var name = $(this).parent().prev().prev().text();//获取父亲的上上的兄弟
+
+                //显示在跳出的模态框中
+                $('.modal-body .id').val(id);
+                $('.modal-body .name').val(name);
+                $('.modal-body .slug').val(slug);
+            });
+
+
+
+
+            // 删除模块 3------------------------------
+            $('tbody').on('click', '.btn-delete', function (e) {
+                //阻止事件默认行为
+                e.preventDefault();
+                //判断是否要删除
+                if (confirm('你确定要删除嘛?')) {
+                    var that = $(this); //储存this 方便在请求里面使用
+                    //获取当前删除的这一个文章类型的id
+                    var cateId = $(this).attr('data-id');
+
+                    $.post({
+                        url: 'http://localhost:8000/admin/category_delete',
+                        data: { id: cateId },
+                        success: function (res) {
+                            if (res.code == 200) {
+                                // console.log(res);
+                                //找到点击的父亲的父亲删除
+                                that.parent().parent().remove();
+                            }
+                        }
+                    })
+                }
             })
         })
     </script>
