@@ -276,6 +276,8 @@
             };
             oPie.setOption(oPieopt);
         };
+
+
         //随机生成颜色
         function getColor() {
             var str = "";
@@ -291,11 +293,115 @@
                 str = "#" + str;
             }
             return str;
-        }
+        };
+
+
 
         //调用函数月表格
-        monthData();
-        function monthData() {
+        setOptionFunc();
+
+        //请求月文章访问量数据
+        $.get({
+            url: 'http://localhost:8000/admin/article_category_visit',
+            success: function (res) {
+                var monthData;
+                var seriesData;
+
+                if (res.code == 200) {
+                    //初始化月份数组monthData
+                    monthData = [];
+                    //初始化统图形条数组seriesData
+                    seriesData = [];
+                    //数组seriesDataCopy承载seriesData数组中对象的可变属性
+                    var seriesDataCopy = [];
+                    //文章类型初始化对象
+                    for (var i = 0; i < serieskeyData.length; i++) {
+                        seriesDataCopy.push({
+                            name: serieskeyData[i],
+                            data: [],
+                            color: ColorArr[i]
+                        });
+                    }
+                }
+
+
+                var arr = res.data;
+
+                for (var i = 0; i < arr.length; i++) {
+                    monthData.push(arr[i].month);
+
+                    for (var j = 0; j < arr[i].all_count.length; j++) {
+                        if (seriesDataCopy[j].name == arr[i].all_count[j].type) {
+                            seriesDataCopy[j].data.push(arr[i].all_count[j].count);
+                        }
+                    }
+                }
+                for (var i = 0; i < seriesDataCopy.length; i++) {
+                    seriesData.push({
+                        name: seriesDataCopy[i].name,
+                        type: 'bar',
+                        barWidth: 20,
+                        itemStyle: {
+                            normal: { areaStyle: { type: 'default' }, color: seriesDataCopy[i].color }
+
+                        },
+                        data: seriesDataCopy[i].data
+                    })
+                }
+                console.log(seriesData, monthData, seriesData);
+                
+                setOptionFunc(seriesData, monthData, seriesData);
+            }
+        });
+
+        
+        function setOptionFunc(keyData, monthData, seriesData) {
+
+            //获取文章类别数组keyData
+            var keyD = keyData || ['奇趣事', '会生活', '爱旅行', '趣美味'];
+            //获取文章数量统计的月数
+            var monthD = monthData || ['1月', '2月', '3月', '4月', '5月'];
+
+            //获取生成条形统计图数组对象参数
+            var seriesD = seriesData || [
+                {
+                    name: '奇趣事',
+                    type: 'bar',
+                    barWidth: 20,
+                    itemStyle: {
+                        normal: { areaStyle: { type: 'default' }, color: '#fd956a' }
+                    },
+                    data: [800, 708, 920, 1090, 1200]
+                },
+                {
+                    name: '会生活',
+                    type: 'bar',
+                    barWidth: 20,
+                    itemStyle: {
+                        normal: { areaStyle: { type: 'default' }, color: '#2bb6db' }
+                    },
+                    data: [400, 468, 520, 690, 800]
+                },
+                {
+                    name: '爱旅行',
+                    type: 'bar',
+                    barWidth: 20,
+                    itemStyle: {
+                        normal: { areaStyle: { type: 'default' }, color: '#13cfd5' }
+                    },
+                    data: [500, 668, 520, 790, 900]
+                },
+                {
+                    name: '趣美味',
+                    type: 'bar',
+                    barWidth: 20,
+                    itemStyle: {
+                        normal: { areaStyle: { type: 'default' }, color: '#00ce68' }
+                    },
+                    data: [600, 508, 720, 890, 1000]
+                }
+            ];
+
             var oColumn = this.echarts.init(document.getElementById('column_show'));
             var oColumnopt =
             {
@@ -308,7 +414,7 @@
                     trigger: 'axis'
                 },
                 legend: {
-                    data: ['奇趣事', '会生活', '爱旅行', '趣美味'],
+                    data: keyD,
                     top: '40'
                 },
                 toolbox: {
@@ -325,7 +431,7 @@
                 xAxis: [
                     {
                         type: 'category',
-                        data: ['1月', '2月', '3月', '4月', '5月']
+                        data: monthD
                     }
                 ],
                 yAxis: [
@@ -334,44 +440,7 @@
                         type: 'value'
                     }
                 ],
-                series: [
-                    {
-                        name: '奇趣事',
-                        type: 'bar',
-                        barWidth: 20,
-                        itemStyle: {
-                            normal: { areaStyle: { type: 'default' }, color: '#fd956a' }
-                        },
-                        data: [800, 708, 920, 1090, 1200]
-                    },
-                    {
-                        name: '会生活',
-                        type: 'bar',
-                        barWidth: 20,
-                        itemStyle: {
-                            normal: { areaStyle: { type: 'default' }, color: '#2bb6db' }
-                        },
-                        data: [400, 468, 520, 690, 800]
-                    },
-                    {
-                        name: '爱旅行',
-                        type: 'bar',
-                        barWidth: 20,
-                        itemStyle: {
-                            normal: { areaStyle: { type: 'default' }, color: '#13cfd5' }
-                        },
-                        data: [500, 668, 520, 790, 900]
-                    },
-                    {
-                        name: '趣美味',
-                        type: 'bar',
-                        barWidth: 20,
-                        itemStyle: {
-                            normal: { areaStyle: { type: 'default' }, color: '#00ce68' }
-                        },
-                        data: [600, 508, 720, 890, 1000]
-                    }
-                ],
+                series: seriesD,
                 grid: {
                     show: true,
                     x: 50,
