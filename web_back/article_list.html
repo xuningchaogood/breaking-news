@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="css/iconfont.css">
     <link rel="stylesheet" href="css/main.css">
     <script src="js/jquery-1.12.4.min.js"></script>
+    <!-- 导入pagination插件(分页插件) -->
+    <script src="./js/jquery.twbsPagination.min.js"></script>
 </head>
 
 <body>
@@ -23,16 +25,16 @@
                 <div class="col-xs-6">
                     <form class="form-inline">
                         <select id="selCategory" name="" class="form-control input-sm">
-                            <option>所有分类</option>
+                            <option value="">所有分类</option>
                             <option>未分类</option>
                             <option>奇趣事</option>
                             <option>会生活</option>
                             <option>爱旅行</option>
                         </select>
                         <select id="selStatus" name="" class="form-control input-sm">
-                            <option>所有状态</option>
-                            <option value="drafted">草稿</option>
-                            <option value="published">已发布</option>
+                            <option value="">所有状态</option>
+                            <option>草稿</option>
+                            <option>已发布</option>
                         </select>
                         <button id="btnSearch" class="btn btn-default btn-sm">筛选</button>
                     </form>
@@ -58,7 +60,7 @@
 
 
                     <tr>
-                        
+
                         <td>王积千造统最头</td>
                         <td>杰克</td>
                         <td>奇趣事</td>
@@ -77,7 +79,7 @@
 
 
                     <tr>
-                     
+
                         <td>级电使正回</td>
                         <td>肉丝</td>
                         <td>爱旅行</td>
@@ -96,7 +98,7 @@
 
 
                     <tr>
-                       
+
                         <td>近难领管年算</td>
                         <td>杰克</td>
                         <td>会生活</td>
@@ -115,7 +117,7 @@
 
 
                     <tr>
-                       
+
                         <td>龙大实究</td>
                         <td>杰克</td>
                         <td>未分类</td>
@@ -134,7 +136,7 @@
 
 
                     <tr>
-                      
+
                         <td>算性得走来拉</td>
                         <td>肉丝</td>
                         <td>奇趣事</td>
@@ -153,7 +155,7 @@
 
 
                     <tr>
-                      
+
                         <td>几平会出气</td>
                         <td>管理员</td>
                         <td>奇趣事</td>
@@ -172,7 +174,7 @@
 
 
                     <tr>
-                      
+
                         <td>世团先证型角</td>
                         <td>杰克</td>
                         <td>奇趣事</td>
@@ -191,7 +193,7 @@
 
 
                     <tr>
-                      
+
                         <td>构更反步五</td>
                         <td>肉丝</td>
                         <td>奇趣事</td>
@@ -210,7 +212,7 @@
 
 
                     <tr>
-                       
+
                         <td>组方些</td>
                         <td>肉丝</td>
                         <td>会生活</td>
@@ -229,7 +231,7 @@
 
 
                     <tr>
-                      
+
                         <td>日做发光成</td>
                         <td>管理员</td>
                         <td>爱旅行</td>
@@ -250,24 +252,116 @@
             </table>
 
             <div class="row text-center">
-            <ul class="pagination pagination-sm">
-                <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
-                <li class="page-item prev disabled"><a href="#" class="page-link">上一页</a></li>
-                <li class="page-item active"><a href="#" class="page-link">1</a></li>
-                <li class="page-item"><a href="#" class="page-link">2</a></li>
-                <li class="page-item"><a href="#" class="page-link">3</a></li>
-                <li class="page-item"><a href="#" class="page-link">4</a></li>
-                <li class="page-item"><a href="#" class="page-link">5</a></li>
-                <li class="page-item"><a href="#" class="page-link">6</a></li>
-                <li class="page-item"><a href="#" class="page-link">7</a></li>
-                <li class="page-item next"><a href="#" class="page-link">下一页</a></li>
-                <li class="page-item last"><a href="#" class="page-link">尾页</a></li>
-            </ul>
-        </div>
+                <ul class="pagination pagination-sm">
+                    <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
+                    <li class="page-item prev disabled"><a href="#" class="page-link">上一页</a></li>
+                    <li class="page-item active"><a href="#" class="page-link">1</a></li>
+                    <li class="page-item"><a href="#" class="page-link">2</a></li>
+                    <li class="page-item"><a href="#" class="page-link">3</a></li>
+                    <li class="page-item"><a href="#" class="page-link">4</a></li>
+                    <li class="page-item"><a href="#" class="page-link">5</a></li>
+                    <li class="page-item"><a href="#" class="page-link">6</a></li>
+                    <li class="page-item"><a href="#" class="page-link">7</a></li>
+                    <li class="page-item next"><a href="#" class="page-link">下一页</a></li>
+                    <li class="page-item last"><a href="#" class="page-link">尾页</a></li>
+                </ul>
+            </div>
 
         </div>
     </div>
+    <!-- 引入模板引擎js文件 -->
+    <script src="./js/template-web.js"></script>
+    <!-- 模板引擎--所有分类 -->
+    <script type="text/html" id="tpl">
+            <option value="">所有分类</option>
+        {{each data}}
+            <option value="{{$value.id}}">{{$value.name}}</option>
+        {{/each}}
+    </script>
 
+    <!-- 模板引擎--文章列表 -->
+    <script id="tpl1" type="text/html">
+        {{each data v}}
+        <tr>
+            <td>{{v.title}}</td>
+            <td>{{v.author}}</td>
+            <td>{{v.type}}</td>
+            <td class="text-center">{{v.date}}</td>
+            <td class="text-center">{{v.state}}</td>
+            <td class="text-center">
+                <a href="post-edit.html" class="btn btn-default btn-xs">编辑</a>
+                <a href="#" data-id={{v.id}} class="btn btn-danger btn-xs">删除</a>
+            </td>
+        </tr>
+        {{/each}}
+    </script>
+    <script>
+        //完成文章搜索
+        //入口函数
+        $(function () {
+            //需求 一打开这个网页就获取 所有文章类别 在下拉菜单中显示 1--------------------
+            $.get({
+                url: 'http://localhost:8000/admin/category_search',
+                success: function (res) {
+                    // console.log(res);
+                    //调用模板引擎--所有分类
+                    var html = template('tpl', res);
+                    $('#selCategory').html(html);
+                },
+            });
+            //一打开就用代码显示在页面上  包成一个函数 方便调用 3-----------------------
+            function getData(myPage) {
+                //获取文章类别和文章状态
+                var category = $('#selCategory').val();
+                var selStatus = $('#selStatus').val();
+
+                //发送请求
+                $.get({
+                    url: 'http://localhost:8000/admin/search',
+                    data: {
+                        type: category,
+                        state: selStatus,
+                        page: myPage,
+                        perpage: 8,
+                    },
+                    success: function (res) {
+                        console.log(res);
+                        if (res.code == 200) {
+                            //调用模板引擎--文章列表
+                            var html = template('tpl1', res);
+                            $('tbody').html(html);
+                        }
+                    }
+                })
+            };
+
+            //需求:点击筛选按钮选出所有符合条件的文章,4-------------------------------
+            $('#btnSearch').on('click', function (e) {
+                //阻止事件默认行为
+                e.preventDefault();
+
+                //调用getData方法
+                getData(1);
+            })
+
+            //页面一打开就点击筛选
+            $('#btnSearch').trigger('click');
+
+
+            //完成分页模块 2---------------------------------------------------------
+            $('.pagination').twbsPagination({
+                totalPages: 25,
+                visiblePages: 5,
+                first: "首页",
+                last: "尾页",
+                prev: '上一页',
+                next: '下一页',
+                onPageClick: function (event, page) {
+                    getData(page);
+                }
+            });
+        });
+    </script>
 
 </body>
 
