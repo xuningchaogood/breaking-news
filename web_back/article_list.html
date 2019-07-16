@@ -291,8 +291,8 @@
             <td class="text-center">{{v.date}}</td>
             <td class="text-center">{{v.state}}</td>
             <td class="text-center">
-                <a href="post-edit.html" class="btn btn-default btn-xs">编辑</a>
-                <a href="#" data-id={{v.id}} class="btn btn-danger btn-xs">删除</a>
+                <a href="post-edit.html" class="btn btn-default btn-compile btn-xs">编辑</a>
+                <a href="#" data-id={{v.id}} class="btn btn-danger btn-delete btn-xs">删除</a>
             </td>
         </tr>
         {{/each}}
@@ -393,6 +393,31 @@
             //页面一打开就点击筛选
             // $('#btnSearch').trigger('click');
 
+
+            // 完成删除文章模块 6-------------------------------------------------
+            $('tbody').on('click',".btn-delete", function (e) {
+                console.log(12312312);
+                
+                e.preventDefault();
+
+                var id = $(this).attr('data-id');
+                console.log(id);
+                
+                var that = $(this)
+                //发送请求
+                $.get({
+                    url: 'http://localhost:8000/admin/article_delete',
+                    data:{id:id},
+                    success: function (res) {
+                        console.log(res);
+
+                        if (res.code == 200) {
+                            that.parent().parent().remove();
+                            alert('删除成功!');
+                        }
+                    }
+                })
+            })
         });
     </script>
 
