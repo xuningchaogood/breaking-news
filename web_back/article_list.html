@@ -13,6 +13,8 @@
     <script src="js/jquery-1.12.4.min.js"></script>
     <!-- 导入pagination插件(分页插件) -->
     <script src="./js/jquery.twbsPagination.min.js"></script>
+
+    <script src="./js/bootstrap/js/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -298,6 +300,7 @@
     <script>
         //完成文章搜索
         //入口函数
+
         $(function () {
             //需求 一打开这个网页就获取 所有文章类别 在下拉菜单中显示 1--------------------
             $.get({
@@ -309,6 +312,30 @@
                     $('#selCategory').html(html);
                 },
             });
+            //声明一个变量 用来记录获取的总的页码数
+            var myTotalPage = 10;
+
+
+            //完成分页模块 2---------------------------------------------------------
+
+            var $pagination = $('.pagination');
+
+            var defaultOpts = {
+
+                totalPages: myTotalPage,//最大页签数
+                visiblePages: 5,//可见页签数
+                first: "首页",
+                last: "尾页",
+                prev: '上一页',
+                next: '下一页',
+                onPageClick: function (event, page) {
+                    getData(page);
+                }
+
+            };
+            $pagination.twbsPagination(defaultOpts);
+
+
             //一打开就用代码显示在页面上  包成一个函数 方便调用 3-----------------------
             function getData(myPage) {
                 //获取文章类别和文章状态
@@ -325,11 +352,30 @@
                         perpage: 8,
                     },
                     success: function (res) {
-                        console.log(res);
+                        // console.log(res);
                         if (res.code == 200) {
                             //调用模板引擎--文章列表
                             var html = template('tpl1', res);
                             $('tbody').html(html);
+
+                            //完成了筛选真是的总页码数  5 ---------------------------------------
+
+                            //backData是ajax发送请求返回的数据,  totalPage是这个返回的数据里面的总页数
+                            var totalPages = res.totalPage; //获取真实的总页码数.
+
+                            if (myTotalPage != totalPages) {//如果现在获取的新的页码数 不等于 当前的总的页码数 那就重绘
+                                myTotalPage = totalPages;//把获取的新的总页数 赋值给我们声明的变量(代表总页数)
+
+                                var currentPage = $pagination.twbsPagination('getCurrentPage');
+
+                                //有一个问题,就是分页插件调用destroy方法的时候,会自动的去调用onPageClick事件.所以就无限循环了.
+                                $pagination.twbsPagination('destroy');
+                                $pagination.twbsPagination($.extend({}, defaultOpts, {
+                                    startPage: 1,
+                                    totalPages: totalPages
+                                }));
+                            }
+
                         }
                     }
                 })
@@ -345,21 +391,8 @@
             })
 
             //页面一打开就点击筛选
-            $('#btnSearch').trigger('click');
+            // $('#btnSearch').trigger('click');
 
-
-            //完成分页模块 2---------------------------------------------------------
-            $('.pagination').twbsPagination({
-                totalPages: 25,
-                visiblePages: 5,
-                first: "首页",
-                last: "尾页",
-                prev: '上一页',
-                next: '下一页',
-                onPageClick: function (event, page) {
-                    getData(page);
-                }
-            });
         });
     </script>
 
