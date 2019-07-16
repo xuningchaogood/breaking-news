@@ -152,26 +152,20 @@
                     url: 'http://localhost:8000/admin/category_search',
                     success: function (res) {
                         // console.log(res);
-
                         if (res.code == 200) {
-
                             var html = template('tpl', res);
-
                             $('tbody').html(html);
                         }
                     }
                 })
             }
             getData();
-
-
             $('#model_add').click(function () {
                 if ($(this).hasClass('btn-success')) {
                     // 编辑模块 4---------------------------------
                     var id = $('.modal-body .id').val();
                     var name = $('.modal-body .name').val();
                     var slug = $('.modal-body .slug').val();
-
                     $.post({
                         url: 'http://localhost:8000/admin/category_edit',
                         data: { id: id, name: name, slug: slug },
@@ -189,7 +183,6 @@
                     //获取用户输入的 分类名字 和别名
                     var cateName = $('#recipient-name').val().trim();
                     var cateSlug = $('#recipient-slug').val().trim();
-
                     //发送请求
                     $.post({
                         url: 'http://localhost:8000/admin/category_add',
@@ -210,18 +203,14 @@
                             }
                         }
                     });
-
                 };
-
                 $('#addModal').modal('hide');
             })
-
             //点击新增类别 原来模态框中的按钮颜色和文本
             $('.btnAddCate').on('click', function () {
                 $("#addModal .modal-title").html('新增分类');
                 $('#model_add').text('新增').removeClass('btn-success');
             })
-
             //编辑文章类别注册点击事件
             $('tbody').on('click', '.btn-edit', function () {
                 $('#addModal .modal-title').html('修改分类');
@@ -231,16 +220,11 @@
                 var id = $(this).attr('data-id');
                 var slug = $(this).parent().prev().text();//获取父亲的上一个兄弟
                 var name = $(this).parent().prev().prev().text();//获取父亲的上上的兄弟
-
                 //显示在跳出的模态框中
                 $('.modal-body .id').val(id);
                 $('.modal-body .name').val(name);
                 $('.modal-body .slug').val(slug);
             });
-
-
-
-
             // 删除模块 3------------------------------
             $('tbody').on('click', '.btn-delete', function (e) {
                 //阻止事件默认行为
@@ -250,7 +234,6 @@
                     var that = $(this); //储存this 方便在请求里面使用
                     //获取当前删除的这一个文章类型的id
                     var cateId = $(this).attr('data-id');
-
                     $.post({
                         url: 'http://localhost:8000/admin/category_delete',
                         data: { id: cateId },
