@@ -195,13 +195,13 @@
             <div class="common_wrap">
                 <h3><i class="fa fa-bullseye"></i> 焦点关注</h3>
                 <ul class="content_list guanzhu_list">
-                    <li><a href="#">神奇的水滴摄影，泡泡中的世界泡泡中的世界</a></li>
+                    <!-- <li><a href="#">神奇的水滴摄影，泡泡中的世界泡泡中的世界</a></li>
                     <li><a href="#">神奇的水滴摄影，泡泡中的世界</a></li>
                     <li><a href="#">神奇的水滴摄影，泡泡中的世界</a></li>
                     <li><a href="#">神奇的水滴摄影，泡泡中的世界</a></li>
                     <li><a href="#">神奇的水滴摄影，泡泡中的世界</a></li>
                     <li><a href="#">神奇的水滴摄影，泡泡中的世界</a></li>
-                    <li><a href="#">神奇的水滴摄影，泡泡中的世界</a></li>
+                    <li><a href="#">神奇的水滴摄影，泡泡中的世界</a></li> -->
                 </ul>
             </div>
         </div>
@@ -237,6 +237,13 @@
         </li>
         {{/each}}
     </script>
+
+    <!-- 创建一周热门排行 -- 模板引擎 -->
+    <script type="text/html" id="tpl1">
+        {{each data v}}
+        <li><a href="#">{{v.title}}</a></li>
+        {{/each}}
+    </script>
     <script>
         $(function () {
             // 一进到 页面就显示最新的5片焦点新闻 1 --------------------------------------------
@@ -249,13 +256,29 @@
                 success: function (res) {
                     if (res.code == 200) {
                         var html = template('tpl', res);
+                        console.log(html);
+                        
                         $('.focus_list').html(html);
                     }
                 }
             });
 
-            // 点击五个焦点新闻进去详情页 2 ----------------------------------------------
-            
+            //显示热门排行的数据 2 -----------------------------------------
+            var id = window.location.search.split('=')[1];
+
+            $.get({
+                url: 'http://localhost:8000/admin/search',
+                data: { id: id },
+                success: function (res) {
+                    if (res.code == 200) {
+                        var html2 = template('tpl1', res);
+                        console.log(html2);
+                        
+                        $('.guanzhu_list').html(html2);
+                        $('.content_list').html(html2);
+                    }
+                }
+            })
         })
     </script>
 </body>

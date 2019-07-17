@@ -213,27 +213,31 @@
                 ({{read}})&nbsp;&nbsp;&nbsp;评论: ({{comment}})
     </script>
     <script>
-        //一进到页面 获取 被点击新闻的id 显示内容在页面上 1 ------------------------------------------
+        $(function () {
+            //一进到页面 获取 被点击新闻的id 显示内容在页面上 1 ------------------------------------------
 
-        var id = window.location.search.split('=')[1];
+            var id = window.location.search.split('=')[1];
 
-        //发送ajax请求
-        $.get({
-            url: 'http://localhost:8000/admin/search',
-            data: { id: id },
-            success: function (res) {
-                console.log(res);
+            //发送ajax请求
+            $.get({
+                url: 'http://localhost:8000/admin/search',
+                data: { id: id },
+                success: function (res) {
+                    console.log(res);
 
-                if (res.code == 200) {
-                    //标题 和  内容
-                    $('.article_title').text(res.data.title);
-                    $('.article_con').html(res.data.content);
+                    if (res.code == 200) {
+                        //标题 和  内容
+                        $('.article_title').text(res.data.title);
+                        $('.article_con').html(res.data.content);
 
-                    var html = template('tpl', res.data);
-                    $('.article_info').html(html);
+                        var html = template('tpl', res.data);
+                        $('.article_info').html(html);
+                    }
                 }
-            }
-        })
+            });
+
+        });
+
     </script>
 </body>
 
